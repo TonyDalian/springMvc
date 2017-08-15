@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Vue</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.min.css">  
+
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+  <script src="jquery.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>  
+  <script src="bootstrap.min.js">
+  </script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>  
+</head>
+<body>  
+  <div id="app" class="container">
+    <h3>Tony's vue form</h3>
+    <hr/>
+    <div class="row">
+      <div class="col-md-4">
+        <label>Vue Datetimepicker:</label>    
+       
+        <br>
+        <form @submit.prevent="submit">
+        <div class="field">
+            name:<input type="text" v-model="info.name">
+        </div>
+         
+        <br>
+         <div class="field">
+            company: <input type="text" v-model="info.company">
+        </div>
+         
+        <br>
+        <input type="checkbox" id="checkbox" v-model="info.checked">
+        <label for="checkbox">checked:{{ info.checked }}</label>
+         
+        <br>
+        <input type="submit" value="submit">
+        <br>
+        <br>
+        <span style="font-size:20px;color:red;">{{valueapp}}</span>
+     <!--    https://cn.vuejs.org/v2/guide/forms.html -->
+       <br>
+       <label style="color:#006193;">Vue js form practice</label><br>
+        <vue-datetimepicker></vue-datetimepicker><br>
+        <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+<label for="jack">Jack</label>
+<input type="checkbox" id="john" value="John" v-model="checkedNames">
+<label for="john">John</label>
+<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+<label for="mike">Mike</label>
+<br>
+<span>Checked names: {{ checkedNames }}</span>
+<br>
+
+  <input type="radio" id="one-apple" value="One apple" v-model="picked">
+  <label for="one-apple">One apple</label>
+  <br>
+  <input type="radio" id="two" value="Two" v-model="picked">
+  <label for="two">Two</label>
+  <br>
+  <span>Picked: {{ picked }}</span>
+
+    </form>
+      </div>
+    </div>
+  </div>
+
+  <template id="dttemplate"> 
+      <div class='input-group date'>
+          <input type='text' class="form-control" v-model="value"/>
+          <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+      </div>
+
+  </template>  
+
+  <script>
+    Vue.component('vue-datetimepicker', {
+      // The todo-item component now accepts a
+      // "prop", which is like a custom attribute.
+      // This prop is called todo.
+      data: function () {
+        return {
+          value: ''
+        }
+      },
+      template: '#dttemplate',
+      mounted: function () {
+        var vm = this
+        var mycomp = $(this.$el).datetimepicker({})
+  
+        mycomp.on('dp.change', function (e) {
+        /*  vm.value = e.date;
+          vm.$emit('change', vm.value);*/
+          app.valueapp = app.getTime(new Date(e.date));
+          vm.value = app.getTime(new Date(e.date));
+         });
+      }
+    });
+//http://www.cnblogs.com/zhangpengshou/archive/2012/07/19/2599053.html
+    var app = new Vue({
+      el: '#app',
+      data: {
+        valueapp:"",
+        picked : "",
+        checkedNames: [],
+        info: {
+            name: '',
+            company: '',
+            age: 0,
+            checked:false
+        }
+      },
+      methods: {
+         submit: function() {
+          var formData = JSON.stringify(this.info);
+          this.$http.post('/Tony-springMVC/saveInfo', formData).then((response) => {
+              // success callback
+        	  this.valueapp = 'tony succeed submit the form data!';
+          }, (response) => {
+              // error callback
+          });
+        },
+        zeroize : function (value, length) {
+
+            if (!length) length = 2;
+            value = String(value);
+            for (var i = 0, zeros = ''; i < (length - value.length); i++) {
+                zeros += '0';
+            }
+
+            return zeros + value;
+
+        },
+        getTime : function (d) {
+
+         var dayof = ['Sun', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat'][d.getDay()];
+         var day =  app.zeroize(d.getDate());
+         var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+         
+         return dayof + " " + month + " " +day+" "+d.getFullYear()+" " + app.zeroize(d.getHours()) + ":" + app.zeroize(d.getMinutes());     
+       
+        }
+      }
+    })
+  </script>
+</body>
+</html>
