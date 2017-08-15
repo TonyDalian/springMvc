@@ -14,3 +14,5 @@ This is my first git project.
      git push -u origin master 
 7. 第二次以后 远程仓库的提交
      git push
+8. 更新仓库
+     git pull
